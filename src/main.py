@@ -5,7 +5,7 @@ Run from the project root with:
     python -m src.main
 """
 
-from src.recommender import load_songs, recommend_songs
+from recommender import load_songs, recommend_songs
 
 
 def main() -> None:
