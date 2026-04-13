@@ -5,6 +5,7 @@ Run from the project root with:
     python src/main.py
 """
 
+from tabulate import tabulate
 from recommender import load_songs, recommend_songs
 
 
@@ -34,21 +35,38 @@ PROFILES = [
 ]
 
 
-def print_profile(label: str, prefs: dict, recommendations: list) -> None:
-    separator = "=" * 60
-    print(f"\n{separator}")
+def print_profile_table(label: str, prefs: dict, recommendations: list) -> None:
+    """Print a profile's preferences and its top recommendations as a formatted ASCII table."""
+    width = 90
+    print("\n" + "=" * width)
     print(f"  {label}")
-    print(separator)
-    print("  Preferences:")
-    for key, val in prefs.items():
-        print(f"    {key}: {val}")
-    print(f"\n  Top {len(recommendations)} Recommendations:\n")
+    print("=" * width)
+
+    # Preferences summary as a compact inline row
+    pref_headers = list(prefs.keys())
+    pref_values = [str(v) for v in prefs.values()]
+    print(tabulate([pref_values], headers=pref_headers, tablefmt="grid"))
+
+    # Recommendations table — one row per song, reasons in the last column
+    headers = ["#", "Title", "Artist", "Genre", "Mood", "Energy", "Score", "Reasons"]
+    rows = []
     for rank, (song, score, explanation) in enumerate(recommendations, start=1):
-        print(f"  #{rank}  {song['title']}  |  {song['artist']}")
-        print(f"       Genre: {song['genre']}  |  Mood: {song['mood']}  |  Energy: {song['energy']}")
-        print(f"       Score: {score:.2f}")
-        print(f"       Why:   {explanation}")
-        print()
+        # Wrap reasons onto separate lines so the table stays readable
+        reasons_wrapped = "\n".join(explanation.split(", "))
+        rows.append([
+            rank,
+            song["title"],
+            song["artist"],
+            song["genre"],
+            song["mood"],
+            f"{song['energy']:.2f}",
+            f"{score:.2f}",
+            reasons_wrapped,
+        ])
+
+    print()
+    print(tabulate(rows, headers=headers, tablefmt="grid"))
+    print()
 
 
 def main() -> None:
@@ -57,7 +75,7 @@ def main() -> None:
 
     for profile in PROFILES:
         recs = recommend_songs(profile["prefs"], songs, k=5)
-        print_profile(profile["label"], profile["prefs"], recs)
+        print_profile_table(profile["label"], profile["prefs"], recs)
 
 
 if __name__ == "__main__":
