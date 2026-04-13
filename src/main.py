@@ -28,7 +28,7 @@ def main() -> None:
 
     print("\n=== Top 5 Recommendations ===\n")
     for rank, (song, score, explanation) in enumerate(recommendations, start=1):
-        print(f"#{rank}  {song['title']}  —  {song['artist']}")
+        print(f"#{rank}  {song['title']}  |  {song['artist']}")
         print(f"     Genre: {song['genre']}  |  Mood: {song['mood']}  |  Energy: {song['energy']}")
         print(f"     Score: {score:.2f}")
         print(f"     Why:   {explanation}")
