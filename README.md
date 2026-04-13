@@ -86,11 +86,183 @@ flowchart TD
 
 ---
 
-## Sample Output
+## Sample Output — Profile 1: High-Energy Pop Fan
 
 Running `python src/main.py` with the default pop/happy profile produces:
 
-![CLI output showing top 5 recommendations](CLI_output.png)
+![CLI output — Profile 1 High-Energy Pop Fan](CLI_output.png)
+
+---
+
+## Experiment Results — All 5 Profiles
+
+### Profile 2: Chill Lofi Listener
+
+```
+============================================================
+  Profile 2 - Chill Lofi Listener
+============================================================
+  Preferences:
+    genre: lofi
+    mood: chill
+    energy: 0.35
+    valence: 0.6
+
+  Top 5 Recommendations:
+
+  #1  Library Rain  |  Paper Lanterns
+       Genre: lofi  |  Mood: chill  |  Energy: 0.35
+       Score: 4.50
+       Why:   genre match (+2.0), mood match (+1.0), energy similarity (1.00), valence similarity (0.50)
+
+  #2  Midnight Coding  |  LoRoom
+       Genre: lofi  |  Mood: chill  |  Energy: 0.42
+       Score: 4.41
+       Why:   genre match (+2.0), mood match (+1.0), energy similarity (0.93), valence similarity (0.48)
+
+  #3  Focus Flow  |  LoRoom
+       Genre: lofi  |  Mood: focused  |  Energy: 0.4
+       Score: 3.44
+       Why:   genre match (+2.0), energy similarity (0.95), valence similarity (0.49)
+
+  #4  Spacewalk Thoughts  |  Orbit Bloom
+       Genre: ambient  |  Mood: chill  |  Energy: 0.28
+       Score: 2.40
+       Why:   mood match (+1.0), energy similarity (0.93), valence similarity (0.47)
+
+  #5  Coffee Shop Stories  |  Slow Stereo
+       Genre: jazz  |  Mood: relaxed  |  Energy: 0.37
+       Score: 1.43
+       Why:   energy similarity (0.98), valence similarity (0.45)
+```
+
+### Profile 3: Deep Intense Rock
+
+```
+============================================================
+  Profile 3 - Deep Intense Rock
+============================================================
+  Preferences:
+    genre: rock
+    mood: intense
+    energy: 0.95
+    valence: 0.3
+
+  Top 5 Recommendations:
+
+  #1  Storm Runner  |  Voltline
+       Genre: rock  |  Mood: intense  |  Energy: 0.91
+       Score: 4.37
+       Why:   genre match (+2.0), mood match (+1.0), energy similarity (0.96), valence similarity (0.41)
+
+  #2  Gym Hero  |  Max Pulse
+       Genre: pop  |  Mood: intense  |  Energy: 0.93
+       Score: 2.25
+       Why:   mood match (+1.0), energy similarity (0.98), valence similarity (0.27)
+
+  #3  Iron Tide  |  Shatter Null
+       Genre: metal  |  Mood: aggressive  |  Energy: 0.97
+       Score: 1.47
+       Why:   energy similarity (0.98), valence similarity (0.49)
+
+  #4  Neon Pulse  |  Flux Drive
+       Genre: edm  |  Mood: euphoric  |  Energy: 0.95
+       Score: 1.31
+       Why:   energy similarity (1.00), valence similarity (0.31)
+
+  #5  Night Drive Loop  |  Neon Echo
+       Genre: synthwave  |  Mood: moody  |  Energy: 0.75
+       Score: 1.21
+       Why:   energy similarity (0.80), valence similarity (0.41)
+```
+
+### Profile 4 (Adversarial): High-Energy Blues Melancholic
+
+> This profile has conflicting signals — the only blues/melancholic song in the catalog has low energy (0.33), but the user wants high energy (0.9). Watch what happens.
+
+```
+============================================================
+  Profile 4 (Adversarial) - High-Energy Blues Melancholic
+============================================================
+  Preferences:
+    genre: blues
+    mood: melancholic
+    energy: 0.9
+    valence: 0.2
+
+  Top 5 Recommendations:
+
+  #1  Empty Crossroads  |  Hank Dolby
+       Genre: blues  |  Mood: melancholic  |  Energy: 0.33
+       Score: 3.87
+       Why:   genre match (+2.0), mood match (+1.0), energy similarity (0.43), valence similarity (0.44)
+
+  #2  Iron Tide  |  Shatter Null
+       Genre: metal  |  Mood: aggressive  |  Energy: 0.97
+       Score: 1.39
+       Why:   energy similarity (0.93), valence similarity (0.46)
+
+  #3  Storm Runner  |  Voltline
+       Genre: rock  |  Mood: intense  |  Energy: 0.91
+       Score: 1.35
+       Why:   energy similarity (0.99), valence similarity (0.36)
+
+  #4  Neon Pulse  |  Flux Drive
+       Genre: edm  |  Mood: euphoric  |  Energy: 0.95
+       Score: 1.21
+       Why:   energy similarity (0.95), valence similarity (0.26)
+
+  #5  Night Drive Loop  |  Neon Echo
+       Genre: synthwave  |  Mood: moody  |  Energy: 0.75
+       Score: 1.20
+       Why:   energy similarity (0.85), valence similarity (0.35)
+```
+
+**Finding:** "Empty Crossroads" ranks #1 even though its energy (0.33) is far below the target (0.9). The genre+mood bonus (3.0 pts) is so large that no other song can catch up through energy alone — the system is "tricked" into ignoring a core preference.
+
+### Profile 5 (Edge Case): Unknown Genre Jazz-Fusion
+
+> This genre does not exist in the catalog. No song can earn the genre bonus.
+
+```
+============================================================
+  Profile 5 (Edge Case) - Unknown Genre Jazz-Fusion
+============================================================
+  Preferences:
+    genre: jazz-fusion
+    mood: relaxed
+    energy: 0.5
+    valence: 0.65
+
+  Top 5 Recommendations:
+
+  #1  Coffee Shop Stories  |  Slow Stereo
+       Genre: jazz  |  Mood: relaxed  |  Energy: 0.37
+       Score: 2.34
+       Why:   mood match (+1.0), energy similarity (0.87), valence similarity (0.47)
+
+  #2  Dirt Road Summer  |  Colt Rivers
+       Genre: country  |  Mood: nostalgic  |  Energy: 0.55
+       Score: 1.41
+       Why:   energy similarity (0.95), valence similarity (0.46)
+
+  #3  Midnight Coding  |  LoRoom
+       Genre: lofi  |  Mood: chill  |  Energy: 0.42
+       Score: 1.38
+       Why:   energy similarity (0.92), valence similarity (0.46)
+
+  #4  Focus Flow  |  LoRoom
+       Genre: lofi  |  Mood: focused  |  Energy: 0.4
+       Score: 1.37
+       Why:   energy similarity (0.90), valence similarity (0.47)
+
+  #5  Library Rain  |  Paper Lanterns
+       Genre: lofi  |  Mood: chill  |  Energy: 0.35
+       Score: 1.32
+       Why:   energy similarity (0.85), valence similarity (0.47)
+```
+
+**Finding:** With no genre matches, the system falls back entirely to mood + energy proximity. Results feel generic — energy-similar lofi and country tracks surface instead of anything jazz-related.
 
 ---
 
@@ -131,144 +303,35 @@ You can add more tests in `tests/test_recommender.py`.
 
 ## Experiments You Tried
 
-Use this section to document the experiments you ran. For example:
-
-- What happened when you changed the weight on genre from 2.0 to 0.5
-- What happened when you added tempo or valence to the score
-- How did your system behave for different types of users
+| Experiment | What changed | What happened |
+|---|---|---|
+| Genre weight 2.0 vs 0.5 | Lowered genre bonus | Profile 1: "Gym Hero" dropped to #4; energy-similar non-pop songs floated up — more diverse but less genre-true |
+| Valence added to scoring | Added `0.5 x valence_proximity` | Profile 3 (low valence rock) now penalizes upbeat songs like "Rooftop Lights" — top 5 felt darker and more fitting |
+| Adversarial conflicting prefs | Blues genre + high energy 0.9 | System returned the slow blues song #1 despite terrible energy match — genre+mood dominance exposed |
+| Unknown genre (jazz-fusion) | No genre matches possible | System fell back to mood + energy only; results felt generic, no jazz-adjacent songs surfaced |
 
 ---
 
 ## Limitations and Risks
 
-Summarize some limitations of your recommender.
+- **Genre weight is too powerful**: The 2-point bonus means that a wrong-energy same-genre song almost always beats a right-energy different-genre song. A user asking for "intense, high-energy music" might get a slow blues track if they picked the matching genre label.
+- **Tiny catalog**: With only 18 songs, many profiles converge on the same top results regardless of subtle preference differences.
+- **Binary text matching**: "Chill" and "relaxed" score as total mismatches. Any typo or synonym in a genre/mood label results in zero points for that feature.
+- **No listening history**: The system cannot learn from what you skip or replay, so it gives the same answer every time.
 
-Examples:
-
-- It only works on a tiny catalog
-- It does not understand lyrics or language
-- It might over favor one genre or mood
-
-You will go deeper on this in your model card.
+See [model_card.md](model_card.md) for the full bias analysis.
 
 ---
 
 ## Reflection
 
-Read and complete `model_card.md`:
+Building VibeFinder revealed how much hidden power is in the *design choices* of a scoring function — not just the algorithm itself. Assigning 2 points to genre and 1 point to mood is a value judgment: it encodes the belief that genre is twice as important as mood. That felt reasonable until the adversarial test showed a user who wanted high-energy music getting a slow, quiet song because the genre label matched. Real platforms like Spotify avoid this by combining dozens of audio features, user history, and crowd signals rather than a single hand-crafted rule.
 
-[**Model Card**](model_card.md)
+The most important bias found is the **genre dominance filter bubble**: if your preferred genre has only one representative in the catalog, you will always get that one song at #1, no matter what. In a real product, this would push minority-genre listeners into a loop of the same few tracks, making the app feel broken for them while working perfectly for pop fans. This is a reminder that fairness in AI is not just about protected characteristics — it can show up in something as mundane as how many songs were included for each genre.
 
-Write 1 to 2 paragraphs here about what you learned:
-
-- about how recommenders turn data into predictions
-- about where bias or unfairness could show up in systems like this
-
+See [reflection.md](reflection.md) for detailed profile-by-profile comparisons.
 
 ---
 
-## 7. `model_card_template.md`
-
-Combines reflection and model card framing from the Module 3 guidance. :contentReference[oaicite:2]{index=2}  
-
-```markdown
-# 🎧 Model Card - Music Recommender Simulation
-
-## 1. Model Name
-
-Give your recommender a name, for example:
-
-> VibeFinder 1.0
-
----
-
-## 2. Intended Use
-
-- What is this system trying to do
-- Who is it for
-
-Example:
-
-> This model suggests 3 to 5 songs from a small catalog based on a user's preferred genre, mood, and energy level. It is for classroom exploration only, not for real users.
-
----
-
-## 3. How It Works (Short Explanation)
-
-Describe your scoring logic in plain language.
-
-- What features of each song does it consider
-- What information about the user does it use
-- How does it turn those into a number
-
-Try to avoid code in this section, treat it like an explanation to a non programmer.
-
----
-
-## 4. Data
-
-Describe your dataset.
-
-- How many songs are in `data/songs.csv`
-- Did you add or remove any songs
-- What kinds of genres or moods are represented
-- Whose taste does this data mostly reflect
-
----
-
-## 5. Strengths
-
-Where does your recommender work well
-
-You can think about:
-- Situations where the top results "felt right"
-- Particular user profiles it served well
-- Simplicity or transparency benefits
-
----
-
-## 6. Limitations and Bias
-
-Where does your recommender struggle
-
-Some prompts:
-- Does it ignore some genres or moods
-- Does it treat all users as if they have the same taste shape
-- Is it biased toward high energy or one genre by default
-- How could this be unfair if used in a real product
-
----
-
-## 7. Evaluation
-
-How did you check your system
-
-Examples:
-- You tried multiple user profiles and wrote down whether the results matched your expectations
-- You compared your simulation to what a real app like Spotify or YouTube tends to recommend
-- You wrote tests for your scoring logic
-
-You do not need a numeric metric, but if you used one, explain what it measures.
-
----
-
-## 8. Future Work
-
-If you had more time, how would you improve this recommender
-
-Examples:
-
-- Add support for multiple users and "group vibe" recommendations
-- Balance diversity of songs instead of always picking the closest match
-- Use more features, like tempo ranges or lyric themes
-
----
-
-## 9. Personal Reflection
-
-A few sentences about what you learned:
-
-- What surprised you about how your system behaved
-- How did building this change how you think about real music recommenders
-- Where do you think human judgment still matters, even if the model seems "smart"
+[**Full Model Card**](model_card.md)
 
