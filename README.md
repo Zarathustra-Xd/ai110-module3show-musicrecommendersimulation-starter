@@ -11,23 +11,78 @@ Your goal is to:
 - Evaluate what your system gets right and wrong
 - Reflect on how this mirrors real world AI recommenders
 
-Replace this paragraph with your own summary of what your version does.
+This project simulates how platforms like Spotify or TikTok guess what you want to hear next. Instead of using neural networks or listening history, it scores every song in a catalog against a user "taste profile" and surfaces the ones that match best. The system prioritizes genre fit above everything else, then mood, then how close a song's energy and positivity are to what the user prefers.
 
 ---
 
 ## How The System Works
 
-Explain your design in plain language.
+### How Real-World Recommenders Work
 
-Some prompts to answer:
+Real recommendation engines like Spotify's Discover Weekly combine two main ideas: *collaborative filtering* (people who liked the same songs as you also liked X) and *content-based filtering* (X sounds like songs you already love). This simulation implements a simplified version of **content-based filtering** — it judges each song by its own attributes rather than relying on crowd behavior. The trade-off is that it is transparent and easy to explain, but it cannot surface "hidden gems" the way collaborative systems can.
 
-- What features does each `Song` use in your system
-  - For example: genre, mood, energy, tempo
-- What information does your `UserProfile` store
-- How does your `Recommender` compute a score for each song
-- How do you choose which songs to recommend
+### Song Features Used
 
-You can include a simple diagram or bullet list if helpful.
+Each `Song` object stores:
+| Feature | Type | Description |
+|---|---|---|
+| `genre` | string | Musical genre (pop, rock, lofi, etc.) |
+| `mood` | string | Emotional tone (happy, chill, intense, etc.) |
+| `energy` | float 0–1 | How energetic / loud the track feels |
+| `tempo_bpm` | float | Beats per minute |
+| `valence` | float 0–1 | Musical positivity (high = upbeat, low = dark) |
+| `danceability` | float 0–1 | How suitable it is for dancing |
+| `acousticness` | float 0–1 | How acoustic (vs. electronic) it sounds |
+
+### User Profile Fields
+
+Each `UserProfile` stores:
+- `favorite_genre` — the genre the user gravitates toward
+- `favorite_mood` — the emotional vibe they prefer right now
+- `target_energy` — how intense they want the music (0.0 = very calm, 1.0 = very intense)
+- `likes_acoustic` — boolean preference for acoustic vs. electronic sound
+
+### Algorithm Recipe (Scoring a Single Song)
+
+| Rule | Points |
+|---|---|
+| Genre matches user's favorite | +2.0 |
+| Mood matches user's favorite | +1.0 |
+| Energy closeness: `1.0 − |song.energy − target_energy|` | 0.0 – 1.0 |
+| Valence closeness: `0.5 × (1.0 − |song.valence − target_valence|)` | 0.0 – 0.5 |
+| Acoustic preference bonus (if `likes_acoustic` and `acousticness > 0.6`) | +0.5 |
+
+Genre carries the most weight (2.0) because genre is the single strongest signal of musical taste. Mood is secondary (1.0). Energy and valence are continuous — they reward *closeness* to the target rather than simply being higher or lower, so a user who wants medium-energy music (0.5) is penalized equally for songs that are too quiet or too loud.
+
+### Ranking Rule
+
+After scoring every song, `recommend_songs` uses Python's `sorted()` (which returns a **new** sorted list without mutating the original catalog) to rank all songs from highest to lowest score. The top `k` results are returned.
+
+**Why separate Scoring from Ranking?**  
+The Scoring Rule answers: *"How good is this one song for this user?"* — it runs once per song.  
+The Ranking Rule answers: *"Which songs are best across the whole catalog?"* — it needs all scores to exist first, then sorts them together. You cannot rank without first scoring everything.
+
+### Data Flow
+
+```mermaid
+flowchart TD
+    A[User Taste Profile\ngenre · mood · energy · valence] --> C
+    B[songs.csv\n18 songs] --> C[score_song\nfor each song]
+    C --> D{Score components}
+    D --> D1[genre match +2.0]
+    D --> D2[mood match +1.0]
+    D --> D3[energy similarity 0–1.0]
+    D --> D4[valence similarity 0–0.5]
+    D1 & D2 & D3 & D4 --> E[Total score per song]
+    E --> F[sorted — highest score first]
+    F --> G[Top K Recommendations\nwith reasons]
+```
+
+### Potential Biases
+
+- **Genre over-prioritization**: A 2.0-point genre bonus means a genre-matching song with a mismatched mood and low energy will often outscore a perfect mood/energy match in the wrong genre. Great songs may be buried.
+- **Cold-start problem**: If a user's preferred genre has few songs in the catalog (e.g., only one reggae track), variety collapses and the system always returns the same result.
+- **Continuous features are treated equally**: Energy and valence are both scored on a distance scale, but in reality a 0.1 energy difference at high intensities feels very different from the same gap at low intensities.
 
 ---
 
