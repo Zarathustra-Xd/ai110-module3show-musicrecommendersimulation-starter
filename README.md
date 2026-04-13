@@ -86,6 +86,14 @@ flowchart TD
 
 ---
 
+## Sample Output
+
+Running `python src/main.py` with the default pop/happy profile produces:
+
+![CLI output showing top 5 recommendations](CLI_output.png)
+
+---
+
 ## Getting Started
 
 ### Setup
