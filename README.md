@@ -66,8 +66,8 @@ The Ranking Rule answers: *"Which songs are best across the whole catalog?"* —
 
 ```mermaid
 flowchart TD
-    A[User Taste Profile\ngenre · mood · energy · valence] --> C
-    B[songs.csv\n18 songs] --> C[score_song\nfor each song]
+    A[User Taste Profile (genre · mood · energy · valence)] --> C
+    B[songs.csv (18 songs)] --> C[score_song (for each song)]
     C --> D{Score components}
     D --> D1[genre match +2.0]
     D --> D2[mood match +1.0]
