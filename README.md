@@ -2,9 +2,9 @@
 
 ## Project Summary
 
-In this project you will build and explain a small music recommender system.
+In this project we will build and explain a small music recommender system.
 
-Your goal is to:
+Our goal is to:
 
 - Represent songs and a user "taste profile" as data
 - Design a scoring rule that turns that data into recommendations
